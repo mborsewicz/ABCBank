@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Infrastructure.Repositories
 {
-    internal class ReadRepositoryAsync<T, Tid> : IReadRepositoryAsync<T, Tid> where T : BaseEntity<Tid>
+    public class ReadRepositoryAsync<T, Tid> : IReadRepositoryAsync<T, Tid> where T : BaseEntity<Tid>
     {
         private readonly ApplicationDbContext _context;
         public ReadRepositoryAsync(ApplicationDbContext context)
