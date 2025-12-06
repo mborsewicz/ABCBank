@@ -1,4 +1,9 @@
 
+using Infrastructure;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
 namespace WebApi
 {
     public class Program
@@ -12,6 +17,10 @@ namespace WebApi
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
+            builder.Services.AddSwaggerGen();
+
+            builder.Services.AddDatabase(builder.Configuration);
+            builder.Services.AddRepositories();
 
             var app = builder.Build();
 
@@ -19,6 +28,13 @@ namespace WebApi
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
+
+                app.UseSwagger(); 
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Swagger (Swashbuckle)");
+                    c.SwaggerEndpoint("/openapi/v1/openapi.json", "OpenAPI (Microsoft)");
+                });
             }
 
             app.UseHttpsRedirection();
