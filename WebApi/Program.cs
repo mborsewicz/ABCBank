@@ -1,4 +1,5 @@
 
+using Application;
 using Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +22,7 @@ namespace WebApi
 
             builder.Services.AddDatabase(builder.Configuration);
             builder.Services.AddRepositories();
+            builder.Services.AddApplicationServices();
 
             var app = builder.Build();
 
