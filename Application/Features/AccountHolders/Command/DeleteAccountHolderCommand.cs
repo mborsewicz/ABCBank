@@ -19,6 +19,11 @@ namespace Application.Features.AccountHolders.Command
     {
         private readonly IUnitOfWork<int> _unitOfWork;
 
+        public DeleteAccountHolderCommandHandler(IUnitOfWork<int> unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+        }
+
         public async Task<ResponseWrapper<int>> Handle(DeleteAccountHolderCommand request, CancellationToken cancellationToken)
         {
             var accountHolderInDb = await _unitOfWork.ReadRepositoryFor<AccountHolder>().GetByIdAsync(request.Id);
