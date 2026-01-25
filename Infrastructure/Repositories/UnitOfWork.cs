@@ -29,7 +29,8 @@ namespace Infrastructure.Repositories
             {
                 _repositories = new Hashtable();
             }
-            var type = typeof(T).Name;
+            var type = $"{typeof(T).Name}_Read";
+            Console.WriteLine("typ: " + type);
             if (!_repositories.ContainsKey(type))
             {
                 var repositoryType = typeof(ReadRepositoryAsync<,>);
@@ -46,7 +47,7 @@ namespace Infrastructure.Repositories
             {
                 _repositories = new Hashtable();
             }
-            var type = typeof(T).Name;
+            var type = $"{typeof(T).Name}_Write";
             if (!_repositories.ContainsKey(type))
             {
                 var repositoryType = typeof(WriteRepositoryAsync<,>);
