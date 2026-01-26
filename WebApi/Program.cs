@@ -40,7 +40,7 @@ namespace WebApi
                 app.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Swagger (Swashbuckle)");
-                    c.SwaggerEndpoint("/openapi/v1/openapi.json", "OpenAPI (Microsoft)");
+                    c.SwaggerEndpoint("/openapi/v1.json", "OpenAPI (Microsoft)");
                 });
             }
 
