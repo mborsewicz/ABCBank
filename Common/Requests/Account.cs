@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Common.Requests
 {
-    public record CreateAccountRequest(string AccountNumber, decimal Balance, AccountType Type);
+    public record CreateAccountRequest(int AccountHolderId, decimal Balance, AccountType Type);
 
 
 }
