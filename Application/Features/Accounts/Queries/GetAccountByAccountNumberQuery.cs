@@ -29,6 +29,7 @@ namespace Application.Features.Accounts.Queries
         {
             _logger.LogInformation("Handling GetAccountByAccountNumberQuery for AccountNumber {AccountNumber}", request.AccountNumber);
 
+            //LINQ to get account by AccountNumber
             var accountInDb =  _unitOfWork.ReadRepositoryFor<Account>()
             .Entities
             .Where(account => account.AccountNumber == request.AccountNumber)

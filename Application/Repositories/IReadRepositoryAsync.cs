@@ -9,6 +9,6 @@ namespace Application.Repositories
     {
         Task<T> GetByIdAsync(TId id);
         Task<List<T>> GetAllAsync();
-        IQueryable<T> Entities { get; set; }
+        IQueryable<T> Entities { get; }
     }
 }
