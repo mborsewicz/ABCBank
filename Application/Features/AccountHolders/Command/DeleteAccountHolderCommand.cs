@@ -2,6 +2,7 @@
 using Common.Wrapper;
 using Domain;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -18,14 +19,17 @@ namespace Application.Features.AccountHolders.Command
     public class DeleteAccountHolderCommandHandler : IRequestHandler<DeleteAccountHolderCommand, ResponseWrapper<int>>
     {
         private readonly IUnitOfWork<int> _unitOfWork;
+        private readonly ILogger<DeleteAccountHolderCommandHandler> _logger;
 
-        public DeleteAccountHolderCommandHandler(IUnitOfWork<int> unitOfWork)
+        public DeleteAccountHolderCommandHandler(IUnitOfWork<int> unitOfWork, ILogger<DeleteAccountHolderCommandHandler> logger)
         {
             _unitOfWork = unitOfWork;
+            _logger = logger;
         }
 
         public async Task<ResponseWrapper<int>> Handle(DeleteAccountHolderCommand request, CancellationToken cancellationToken)
         {
+            _logger.LogInformation("Deleting account holder with Id {Id}", request.Id);
             var accountHolderInDb = await _unitOfWork.ReadRepositoryFor<AccountHolder>().GetByIdAsync(request.Id);
 
             if (accountHolderInDb is not null)

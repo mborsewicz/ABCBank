@@ -1,6 +1,7 @@
 ﻿using Application.Repositories;
 using Domain.Contracts;
 using Infrastructure.Contexts;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,16 +12,21 @@ namespace Infrastructure.Repositories
     internal class UnitOfWork<TId> : IUnitOfWork<TId>
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<UnitOfWork<TId>> _logger;
         private bool _disposed;
         private Hashtable _repositories;
 
-        public UnitOfWork(ApplicationDbContext context)
+        public UnitOfWork(ApplicationDbContext context, ILogger<UnitOfWork<TId>>logger)
         {
             _context = context;
+            _logger = logger;
         }
         public async Task<int> CommitAsync(CancellationToken cancellationToken)
         {
-            return await _context.SaveChangesAsync(cancellationToken);
+            _logger.LogInformation("Committing changes to the database");
+            var result = await _context.SaveChangesAsync(cancellationToken);
+            _logger.LogInformation("Commit completed, {Count} changes saved", result);
+            return result;
         }
 
         public IReadRepositoryAsync<T, TId> ReadRepositoryFor<T>() where T : BaseEntity<TId>
@@ -30,7 +36,9 @@ namespace Infrastructure.Repositories
                 _repositories = new Hashtable();
             }
             var type = $"{typeof(T).Name}_Read";
-            Console.WriteLine("typ: " + type);
+            _logger.LogInformation("Getting ReadRepository for {EntityType}", typeof(T).Name);
+            //Console.WriteLine("typ: " + type);
+
             if (!_repositories.ContainsKey(type))
             {
                 var repositoryType = typeof(ReadRepositoryAsync<,>);
@@ -48,6 +56,8 @@ namespace Infrastructure.Repositories
                 _repositories = new Hashtable();
             }
             var type = $"{typeof(T).Name}_Write";
+            _logger.LogInformation("Getting WriteRepository for {EntityType}", typeof(T).Name);
+
             if (!_repositories.ContainsKey(type))
             {
                 var repositoryType = typeof(WriteRepositoryAsync<,>);
@@ -68,6 +78,7 @@ namespace Infrastructure.Repositories
             {
                 if (disposing)
                 {
+                    _logger.LogInformation("Disposing UnitOfWork and DbContext");
                     _context.Dispose();
                 }
             }

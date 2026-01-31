@@ -6,6 +6,7 @@ using Common.Wrapper;
 using Common.Requests;
 using Application.Repositories;
 using Domain;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Features.AccountHolders.Command
 {
@@ -17,12 +18,15 @@ namespace Application.Features.AccountHolders.Command
     public class UpdateAccountHolderCommandHandler : IRequestHandler<UpdateAccountHolderCommand, ResponseWrapper<int>>
     {
         private readonly IUnitOfWork<int> _unitOfWork;
-        public UpdateAccountHolderCommandHandler(IUnitOfWork<int> unitOfWork)
+        private readonly ILogger<CreateAccountHolderCommandHandler> _logger;
+        public UpdateAccountHolderCommandHandler(IUnitOfWork<int> unitOfWork, ILogger<CreateAccountHolderCommandHandler> logger)
         {
             _unitOfWork = unitOfWork;
+            _logger = logger;
         }
         public async Task<ResponseWrapper<int>> Handle(UpdateAccountHolderCommand request, CancellationToken cancellationToken)
         {
+            _logger.LogInformation("Update account holder");
             var accountHolderInDb = await _unitOfWork.ReadRepositoryFor<AccountHolder>().GetByIdAsync(request.UpdateAccountHolder.Id);
 
             if (accountHolderInDb is not null)
