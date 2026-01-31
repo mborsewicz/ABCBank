@@ -1,6 +1,8 @@
 ﻿using Application.Repositories;
 using Domain.Contracts;
 using Infrastructure.Contexts;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections;
@@ -13,13 +15,15 @@ namespace Infrastructure.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<UnitOfWork<TId>> _logger;
+        private readonly IServiceProvider _serviceProvider;
         private bool _disposed;
         private Hashtable _repositories;
 
-        public UnitOfWork(ApplicationDbContext context, ILogger<UnitOfWork<TId>>logger)
+        public UnitOfWork(ApplicationDbContext context, ILogger<UnitOfWork<TId>>logger, IServiceProvider serviceProvider)
         {
             _context = context;
             _logger = logger;
+            _serviceProvider = serviceProvider;
         }
         public async Task<int> CommitAsync(CancellationToken cancellationToken)
         {
@@ -41,9 +45,8 @@ namespace Infrastructure.Repositories
 
             if (!_repositories.ContainsKey(type))
             {
-                var repositoryType = typeof(ReadRepositoryAsync<,>);
-                var repositoryInstance = Activator.CreateInstance(repositoryType.MakeGenericType(typeof(T), typeof(TId)), _context);
-                _repositories.Add(type, repositoryInstance);
+                var repository = _serviceProvider.GetRequiredService<IReadRepositoryAsync<T, TId>>();
+                _repositories.Add(type, repository);
 
             }
             return (IReadRepositoryAsync<T, TId>)_repositories[type];
@@ -60,9 +63,8 @@ namespace Infrastructure.Repositories
 
             if (!_repositories.ContainsKey(type))
             {
-                var repositoryType = typeof(WriteRepositoryAsync<,>);
-                var repositoryInstance = Activator.CreateInstance(repositoryType.MakeGenericType(typeof(T), typeof(TId)), _context);
-                _repositories.Add(type, repositoryInstance);
+                var repository = _serviceProvider.GetRequiredService<IWriteRepositoryAsync<T, TId>>();
+                _repositories.Add(type, repository);
 
             }
             return (IWriteRepositoryAsync<T, TId>)_repositories[type];
