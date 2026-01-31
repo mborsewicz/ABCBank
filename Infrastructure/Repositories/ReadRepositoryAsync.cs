@@ -45,5 +45,11 @@ namespace Infrastructure.Repositories
 
             return entity;
         }
+
+        public IQueryable<T> Entities()
+        {
+            _logger.LogInformation("Creating queryable for entity type {EntityType}", typeof(T).Name);
+            return _context.Set<T>();
+        }
     }
 }
