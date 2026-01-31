@@ -39,10 +39,10 @@ namespace Application.Features.Accounts.Queries
             {
                 var response = accountInDb.Adapt<AccountResponse>();
                 _logger.LogInformation("Found account {@Response}", response);
-                return new ResponseWrapper<AccountResponse>().Success(data: response);
+                return await Task.FromResult(new ResponseWrapper<AccountResponse>().Success(data: response));
             }
             _logger.LogWarning("Account with AccountNumber {AccountNumber} does not exist", request.AccountNumber);
-            return new ResponseWrapper<AccountResponse>().Failed("Account does not exist");
+            return await Task.FromResult(new ResponseWrapper<AccountResponse>().Failed("Account does not exist"));
 
         }
     }
