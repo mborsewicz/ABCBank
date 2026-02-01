@@ -34,11 +34,15 @@ namespace Application.Features.Accounts.Commands
             var accountInDb = await _unitOfWork.ReadRepositoryFor<Account>().GetByIdAsync(request.Transaction.AccountId);
             if (accountInDb is not null)
             {
-                //know the transaction type
-                //validate if nessesary
-                if (request.Transaction.Type == TransactionType.Withdrawal
-                    && request.Transaction.Amount <= accountInDb.Balance)
+                //know the transaction type          
+                if (request.Transaction.Type == TransactionType.Withdrawal)
                 {
+                    //validate if nessesary
+                    if (request.Transaction.Amount > accountInDb.Balance)
+                    {
+                        _logger.LogWarning("Insufficient balance for withdrawal on Account ID: {AccountId}", request.Transaction.AccountId);
+                        return new ResponseWrapper<int>().Failed(message: "Withdrawal amount is higher than account balance");
+                    }
                     //create transaction
                     _logger.LogInformation("Creating withdrawal transaction for Account ID: {AccountId}", request.Transaction.AccountId);
                     var transaction = new Transaction()
@@ -48,6 +52,7 @@ namespace Application.Features.Accounts.Commands
                         Type = TransactionType.Withdrawal,
                         Date = DateTime.Now
                     };
+
                     //update account balance
                     _logger.LogInformation("Updating account balance for Account ID: {AccountId}", request.Transaction.AccountId);
                     accountInDb.Balance -= request.Transaction.Amount;
@@ -58,7 +63,7 @@ namespace Application.Features.Accounts.Commands
                     _logger.LogInformation("Withdrawal transaction completed for Account ID: {AccountId}", request.Transaction.AccountId);
                     return new ResponseWrapper<int>().Success(data: transaction.Id, message: "Withdrawal was successfully");
                 }
-                else
+                else if (request.Transaction.Type == TransactionType.Deposit)
                 {
                     //create transaction
                     _logger.LogInformation("Creating deposit transaction for Account ID: {AccountId}", request.Transaction.AccountId);
