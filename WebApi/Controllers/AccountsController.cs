@@ -87,5 +87,19 @@ namespace WebApi.Controllers
             _logger.LogWarning("Failed to retrieve accounts {@Response}", response);
             return NotFound(response);
         }
+
+        [HttpGet("transactions/{accountId}")]
+        public async Task<IActionResult> GetAccountTransactionAsync(int accountId)
+        {
+            _logger.LogInformation("Received GetTransactionsByAccountId request for AccountId {AccountId}", accountId);
+            var response = await Sender.Send(new GetAccountTransactionQuery() { AccountId = accountId });
+            if (response.IsSuccessful)
+            {
+                _logger.LogInformation("Transactions retrieved successfully {@Response}", response);
+                return Ok(response);
+            }
+            _logger.LogWarning("Failed to retrieve transactions {@Response}", response);
+            return NotFound(response);
+        }
     }
 }
