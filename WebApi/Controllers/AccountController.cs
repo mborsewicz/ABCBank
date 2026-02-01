@@ -32,6 +32,20 @@ namespace WebApi.Controllers
             return BadRequest(response);
         }
 
+        [HttpPost("transact")]
+        public async Task<IActionResult> TransactAsync([FromBody] TransactionRequest transaction)
+        {
+            _logger.LogInformation("Received TransactAccount request {@Transaction}", transaction);
+            var response = await Sender.Send(new CreateTransactionCommand() { Transaction = transaction });
+            if (response.IsSuccessful)
+            {
+                _logger.LogInformation("Account transaction completed successfully {@Response}", response);
+                return Ok(response);
+            }
+            _logger.LogWarning("Failed to complete account transaction {@Response}", response);
+            return BadRequest(response);
+        }
+
         [HttpGet("by-id/{id}")]
         public async Task<IActionResult> GetAccountByIdAsync(int id)
         {
