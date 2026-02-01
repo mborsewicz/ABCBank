@@ -86,7 +86,7 @@ namespace Application.Features.Accounts.Commands
                 }
             }
             _logger.LogWarning("Account with ID: {AccountId} does not exist", request.Transaction.AccountId);
-            return new ResponseWrapper<int>().Failed(message: "Account does exist");
+            return new ResponseWrapper<int>().Failed(message: "Account does not exist");
         }
     }
 }

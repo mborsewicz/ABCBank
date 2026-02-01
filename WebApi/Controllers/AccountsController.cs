@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
-    public class AccountController : BaseApiController
+    public class AccountsController : BaseApiController
     {
-        private readonly ILogger<AccountController> _logger;
+        private readonly ILogger<AccountsController> _logger;
 
-        public AccountController(ILogger<AccountController> logger)
+        public AccountsController(ILogger<AccountsController> logger)
         {
             _logger = logger;
         }
