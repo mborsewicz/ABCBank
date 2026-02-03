@@ -36,7 +36,7 @@ namespace Application.Features.AccountHolders.Queries
                     return new ResponseWrapper<AccountHolderResponse>().Success(response);
                 }
                 _logger.LogWarning("No account holder found with Id {Id}", request.Id);
-                return new ResponseWrapper<AccountHolderResponse>().Failed("No account holder found with the given id");
+                return new ResponseWrapper<AccountHolderResponse>().Failed($"No account holder found with the given id: {request.Id}");
             }
         }
     }
